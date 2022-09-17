@@ -1,10 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
 <body>
-    <h1>Hello World!</h1>
+    <div class="wrapper">
+    <div class="container" style="margin: 20px;">
+        <h1 style="color: white; margin-bottom: 5px;">Chat Room</h1>
+        <div style="border: 1px solid #aaa; height: 60vh; width: 70%;">
+            <ul id="messages"></ul>
+        </div>
+        <div class="sendMsg" style="padding-top: 10px; width: 100%;">
+            <input type="text" id="myMessage">
+            <button id="sendbutton" style="background-color: #333; border: solid 1px #888; color: #aaa; padding: 3px 10px 3px 10px;">Send</button>
+        </div>
+
+    </div>
+    </div>
+
 </body>
 </html>
+{% endblock %}

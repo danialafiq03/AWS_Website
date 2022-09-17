@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<style>
+#bef::before {
+    content: '';
+    display: table;
+    height: 76px;
+}
+
+</style>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+      <!-- Template Main CSS File -->
+      <link href="/static/css/style.css" rel="stylesheet">
+        {% block navbar %}
+            {% include 'includes/navbar.html' %}
+        {% endblock %}
+      <div id="bef"></div>
+
+    {% block scripts %}
+      <!-- Template Main JS File -->
+      <script src="/static/js/main.js"></script>
+    {% endblock %}
+</head>
+        {% block content %}
+        {% endblock %}
+</html>
