@@ -4,7 +4,6 @@ import random
 
 application = Flask(__name__)
 app = application
-app.config['SECRET'] = "secret123"
 app.secret_key = 'secret123'
 socketio = SocketIO(app, cors_allowed_origins="*")
 
