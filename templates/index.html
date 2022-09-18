@@ -1,18 +1,57 @@
 <!DOCTYPE html>
+<html>
 {% extends "base.html" %}
 {% block title %}Home{% endblock %}
 
 {% block content %}
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.2/socket.io.js"></script>
+</head>
 <body>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var socket = io.connect("http://danserenity.xyz:8888")
+
+            {% if 'user_id' in session %}
+            user = '{{ g.user.get_full_name() }}'
+            {% else %}
+            user = 'Guest #{{ session['guest_id'] }}'
+            {% endif %}
+            console.log(user)
+            socket.on('connect', function() {
+                socket.send("User connected!");
+            });
+
+            socket.on('message', function(data) {
+                $('#messages').append($('<p>').text(data));
+                console.log(data)
+            });
+
+            $('#sendBtn').on('click', function() {
+                if ($('#myMessage').val() != ''){
+                    socket.send(user + ': ' + $('#myMessage').val());
+                    $('#myMessage').val('');
+                }
+            });
+
+            $('#myMessage').keypress(function() {
+                var keycode = (event.keyCode ? event.keyCode : event.which);
+                if(keycode == '13'){
+                    socket.send(user + ': ' + $('#myMessage').val());
+                    $('#myMessage').val('');
+                }
+            });
+        })
+    </script>
     <div class="wrapper">
     <div class="container" style="margin: 20px;">
         <h1 style="color: white; margin-bottom: 5px;">Chat Room</h1>
-        <div style="border: 1px solid #aaa; height: 60vh; width: 70%;">
-            <ul id="messages"></ul>
+        <div style="border: 1px solid #aaa; height: 60vh; width: 70%;" id="messages">
         </div>
         <div class="sendMsg" style="padding-top: 10px; width: 100%;">
-            <input type="text" id="myMessage">
-            <button id="sendbutton" style="background-color: #333; border: solid 1px #888; color: #aaa; padding: 3px 10px 3px 10px;">Send</button>
+            <input type="text" id="myMessage" style="width: 59.3%; height: 50px;">
+            <button id="sendBtn" style="width: 10%; height: 57px;">Send</button>
         </div>
 
     </div>

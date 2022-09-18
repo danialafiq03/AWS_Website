@@ -20,3 +20,7 @@ body {
     border: solid 1px #aaa;
     color: white;
 }
+
+#messages > p {
+    margin-left: 15px;
+}
