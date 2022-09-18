@@ -4,28 +4,59 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
+
 <head>
+    <style>
+        /* Create two equal columns that floats next to each other */
+        .column {
+          float: left;
+        }
+
+        /* Clear floats after the columns */
+        .row:after {
+          content: "";
+          display: table;
+          clear: both;
+        }
+    </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.2/socket.io.js"></script>
 </head>
 <body>
     <script type="text/javascript">
         $(document).ready(function() {
-            var socket = io.connect("http://danserenity.xyz:80")
-
+            var socket = io.connect("http://localhost:8888")
             {% if 'user_id' in session %}
             user = '{{ g.user.get_full_name() }}'
             {% else %}
             user = 'Guest #{{ session['guest_id'] }}'
             {% endif %}
-            console.log(user)
+
+
             socket.on('connect', function() {
-                socket.send("User connected!");
+                socket.send(user + " connected!");
+                socket.emit('connects', user);
+            });
+
+            socket.on('users', function(usersList) {
+                $('#usersList').empty()
+                for (i in usersList) {
+                    $('#usersList').append($('<p>').text(usersList[i]));
+                }
+            });
+
+            socket.on('disconnect', function() {
+                socket.send(" has left the chat!");
+                socket.emit('disconnected', "aa");
+            });
+
+
+            socket.on('conn_message', function(data) {
+                $('#messages').append($('<p style="color: #3fba43">').text(data));
             });
 
             socket.on('message', function(data) {
                 $('#messages').append($('<p>').text(data));
-                console.log(data)
             });
 
             $('#sendBtn').on('click', function() {
@@ -47,10 +78,17 @@
     <div class="wrapper">
     <div class="container" style="margin: 20px;">
         <h1 style="color: white; margin-bottom: 5px;">Chat Room</h1>
-        <div style="border: 1px solid #aaa; height: 60vh; width: 70%;" id="messages">
+        <div class="row">
+            <div class="column" style="border: 1px solid #aaa; height: 60vh; width: 75%;" id="messages">
+
+            </div>
+            <div class="column" style="border: 1px solid #aaa; height: 60vh; width: 24%;" id="Users">
+                <h3 style="margin: 10px; text-align: center;">Users</h3>
+                <div id="usersList"></div>
+            </div>
         </div>
         <div class="sendMsg" style="padding-top: 10px; width: 100%;">
-            <input type="text" id="myMessage" style="width: 59.30%; height: 50px;">
+            <input type="text" id="myMessage" style="width: 64.30%; height: 50px;" placeholder="Type your message here...">
             <button id="sendBtn" style="width: 10%; height: 57px;">Send</button>
         </div>
 
