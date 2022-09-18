@@ -8,15 +8,6 @@ app.secret_key = 'secret123'
 socketio = SocketIO(app, cors_allowed_origins="*")
 usersList = []
 
-# @app.before_request
-# def before_request():
-#     if 'guest_id' not in session:
-#         random_num = random.randint(0, 10000)
-#         session['guest_id'] = random_num
-#         user = "Guest #" + str(session['guest_id'])
-#         usersList.append(user)
-#     print(usersList)
-
 @app.before_request
 def before_request():
     if 'guest_id' in session:
@@ -25,27 +16,25 @@ def before_request():
 
 @socketio.on('message')
 def handle_message(message):
-    if message[-10:] == 'connected!':
-        emit('conn_message', message, broadcast=True)
-    else:
-        send(message, broadcast=True)
+    send(message, broadcast=True)
 
 @socketio.on('connects')
 def handle_connect(username):
-
     if username not in usersList:
         usersList.append(username)
-    print(usersList)
+    message = username + " connected!"
+    emit('conn_message', message, broadcast=True)
     emit('users', usersList, broadcast=True)
 
 
-@socketio.on('disconnected')
-def handle_disconnect(username):
+@socketio.on('disconnect')
+def disconnect_details():
+    username = "Guest #" + str(session['guest_id'])
+    print(f"{username} left the chat")
     usersList.remove(username)
-    message = username + " has left the chat."
-    send(message, broadcast=True)
+    message = username + " left the chat"
+    emit('disconn_message', message, broadcast=True)
     emit('users', usersList, broadcast=True)
-    print(usersList)
 
 @app.route('/')
 def index():
@@ -70,4 +59,4 @@ def login():
     return "Login Page"
 
 if __name__ == "__main__":
-    socketio.run(app, host='0.0.0.0', port=80, allow_unsafe_werkzeug=True)
+    socketio.run(app, host='0.0.0.0', port=8888, allow_unsafe_werkzeug=True)
