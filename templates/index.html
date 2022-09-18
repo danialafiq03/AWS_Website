@@ -11,7 +11,7 @@
 <body>
     <script type="text/javascript">
         $(document).ready(function() {
-            var socket = io.connect("http://danserenity.xyz:8888")
+            var socket = io.connect("http://52.77.174.39:8888")
 
             {% if 'user_id' in session %}
             user = '{{ g.user.get_full_name() }}'
